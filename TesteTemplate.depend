@@ -1,0 +1,18 @@
+# depslib dependency file v1.0
+1530068616 source:f:\users\marlon\documents\ciência da computação\cg\exerciciocurvas\curves.cpp
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"GL/glut.h"
+
+1268256196 f:\users\marlon\documents\ciência da computação\cg\exerciciocurvas\gl\glut.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1530068616 source:f:\users\marlon\documents\ciência da computação\cg\exerciciocurvas\main.cpp
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"GL/glut.h"
+
