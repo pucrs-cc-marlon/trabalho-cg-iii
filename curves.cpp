@@ -3,6 +3,9 @@
 #include <string.h>
 #include "GL/glut.h"
 
+// Aluno: Marlon Baptista de Quadros
+// Matrícula: 12104910-0
+
 #define SENS_ROT	5.0
 #define SENS_OBS	1.0
 #define SENS_TRANSL	1.0
@@ -24,6 +27,16 @@ float BezierPoints[4][3] =
 	{ 45,10,2 },
 	{ 50,10,0 }
 };
+
+// Nova curva Bezier
+float BezierPoints2[4][3] =
+{
+	{ 50,10,-2 },
+	{ 55,10,0 },
+	{ 65,0,2 },
+	{ 70,5,0 }
+};
+
 //Control points for Hermite curve
 float HermitePoints[4][3] =
 {
@@ -115,6 +128,22 @@ void desenhaPontosDeControle()
 	for(int l=0; l<strlen(strP3); l++)
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10,strP3[l]);
 
+
+	//Bezier 2
+	glRasterPos3d(BezierPoints2[0][0], BezierPoints2[0][1], BezierPoints2[0][2]);
+	for (int l = 0; l<strlen(strP0); l++)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, strP0[l]);
+	glRasterPos3d(BezierPoints2[1][0], BezierPoints2[1][1], BezierPoints2[1][2]);
+	for (int l = 0; l<strlen(strP1); l++)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, strP1[l]);
+	glRasterPos3d(BezierPoints2[2][0], BezierPoints2[2][1], BezierPoints2[2][2]);
+	for (int l = 0; l<strlen(strP2); l++)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, strP2[l]);
+	glRasterPos3d(BezierPoints2[3][0], BezierPoints2[3][1], BezierPoints2[3][2]);
+	for (int l = 0; l<strlen(strP3); l++)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, strP3[l]);
+
+
 	//BSpline
 	glRasterPos3d(BSplinePoints[0][0], BSplinePoints[0][1], BSplinePoints[0][2]);
 	for(int l=0; l<strlen(strP0); l++)
@@ -132,7 +161,7 @@ void desenhaPontosDeControle()
 
 void desenhaNomes()
 {
-	char* str_Bezier = "Bezier"; char* str_BSpline = "BSpline"; char* str_Hermite = "Hermite";
+	char* str_Bezier = "Bezier"; char* str_BSpline = "BSpline"; char* str_Hermite = "Hermite"; char* str_Bezier2 = "Bezier 2";
 	glColor3d(1,1,0);
 
 	//Hermite
@@ -144,6 +173,11 @@ void desenhaNomes()
 	glRasterPos3d(BezierPoints[0][0], BezierPoints[0][1] + 8, BezierPoints[0][2]);
 	for(int l=0; l<strlen(str_Bezier); l++)
 		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12,str_Bezier[l]);
+
+	//Bezier 2
+	glRasterPos3d(BezierPoints2[0][0], BezierPoints2[0][1] + 8, BezierPoints2[0][2]);
+	for (int l = 0; l<strlen(str_Bezier2); l++)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, str_Bezier2[l]);
 
 	//BSpline
 	glRasterPos3d(BSplinePoints[0][0], BSplinePoints[0][1] + 8, BSplinePoints[0][2]);
@@ -212,6 +246,70 @@ void desenhaBezier()
 	glBegin(GL_LINE_STRIP);
 	for(int i=0;i!=4;++i) {
 		glVertex3fv( BezierPoints[i] );
+	}
+	glEnd();
+}
+
+void desenhaBezier2()
+{
+	glColor3f(1, 0, 1);
+	glLineWidth(3);
+
+	glBegin(GL_LINE_STRIP);
+
+	for (int i = 0; i != LOD; ++i) {
+
+		// use the parametric time value 0 to 1
+		float t = (float)i / (15 - 1);
+
+		// nice to pre-calculate 1.0f-t because we will need it frequently
+		float it = 1.0f - t;
+
+		// calculate blending functions
+		float b0 = t * t*t;
+		float b1 = 3 * t*t*it;
+		float b2 = 3 * t*it*it;
+		float b3 = it * it*it;
+
+		// calculate the x,y and z of the curve point by summing
+		// the Control vertices weighted by their respective blending
+		// functions
+		//
+		float x = b0 * BezierPoints2[0][0] +
+			b1 * BezierPoints2[1][0] +
+			b2 * BezierPoints2[2][0] +
+			b3 * BezierPoints2[3][0];
+
+		float y = b0 * BezierPoints2[0][1] +
+			b1 * BezierPoints2[1][1] +
+			b2 * BezierPoints2[2][1] +
+			b3 * BezierPoints2[3][1];
+
+		float z = b0 * BezierPoints2[0][2] +
+			b1 * BezierPoints2[1][2] +
+			b2 * BezierPoints2[2][2] +
+			b3 * BezierPoints2[3][2];
+
+		// specify the point
+		glVertex3f(x, y, z);
+	}
+	glEnd();
+
+	// draw the Control Vertices
+	glColor3f(0, 1, 0);
+	glPointSize(5);
+	glBegin(GL_POINTS);
+	for (int i = 0; i != 4; ++i) {
+		glVertex3fv(BezierPoints2[i]);
+	}
+	glEnd();
+
+	// draw the hull of the curve
+	glColor3f(0, 1, 1);
+	glLineWidth(1);
+	glBegin(GL_LINE_STRIP);
+	for (int i = 0; i != 4; ++i) {
+		glVertex3fv(BezierPoints2[i]);
 	}
 	glEnd();
 }
@@ -350,6 +448,7 @@ void OnDraw()
 	desenhaChao();
 
 	desenhaBezier();
+	desenhaBezier2();
 	desenhaBSpline();
 	desenhaHermite();
 
@@ -428,33 +527,33 @@ void GerenciaTeclado(unsigned char key, int x, int y){
         exit(0);
     }
     switch(key){
-    case '+':
-        ++LOD;
-        break;
-    case '-':
-        --LOD;
-        if(LOD < 2){
-            LOD = 2;
-        }
-        break;
-    case '1':
-        p1 = true; p2 = false; p3 = false; p4 = false;
-        printf("\nP1 selected.");
-        break;
-    case '2':
-        p1 = false; p2 = true; p3 = false; p4 = false;
-        printf("\nP2 selected.");
-        break;
-    case '3':
-        p1 = false; p2 = false; p3 = true; p4 = false;
-        printf("\nP3 selected.");
-        break;
-    case '4':
-        p1 = false; p2 = false; p3 = false; p4 = true;
-        printf("\nP4 selected.");
-        break;
-    default:
-        break;
+		case '+':
+			++LOD;
+			break;
+		case '-':
+			--LOD;
+			if(LOD < 2){
+				LOD = 2;
+			}
+			break;
+		case '1':
+			p1 = true; p2 = false; p3 = false; p4 = false;
+			printf("\nP1 selected.");
+			break;
+		case '2':
+			p1 = false; p2 = true; p3 = false; p4 = false;
+			printf("\nP2 selected.");
+			break;
+		case '3':
+			p1 = false; p2 = false; p3 = true; p4 = false;
+			printf("\nP3 selected.");
+			break;
+		case '4':
+			p1 = false; p2 = false; p3 = false; p4 = true;
+			printf("\nP4 selected.");
+			break;
+		default:
+			break;
     }
     glutPostRedisplay();
 }

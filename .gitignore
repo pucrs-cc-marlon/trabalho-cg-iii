@@ -369,5 +369,6 @@ ASALocalRun/
 # should be stored in the .pubxml.user file.
 *.pubxml.user
 
+IMAGENS/
 
 # End of https://www.gitignore.io/api/c++,visualstudio
